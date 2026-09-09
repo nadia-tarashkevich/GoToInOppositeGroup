@@ -3,5 +3,9 @@
 # GoToInOppositeGroup Changelog
 
 ## [Unreleased]
+
+## [1.0.0] - 2026-09-09
 ### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+- "Goto Implementation in Opposite Group" action that navigates to a symbol's implementation in the opposite editor split
+- Automatically creates a split if one does not exist
+- Available from Navigate menu, editor context menu, and Search Everywhere

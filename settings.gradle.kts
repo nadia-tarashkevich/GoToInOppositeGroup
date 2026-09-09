@@ -1,6 +1,6 @@
 import org.jetbrains.intellij.platform.gradle.extensions.intellijPlatform
 
-rootProject.name = "IntelliJ Platform Plugin Template"
+rootProject.name = "GoToInOppositeGroup"
 
 pluginManagement {
     plugins {
@@ -14,7 +14,6 @@ plugins {
     id("org.jetbrains.intellij.platform.settings") version "2.16.0"
 }
 
-@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     // Configure all projects' repositories
     repositories {
