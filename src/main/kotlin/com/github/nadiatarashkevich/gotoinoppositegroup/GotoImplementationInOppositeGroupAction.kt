@@ -1,60 +1,32 @@
 package com.github.nadiatarashkevich.gotoinoppositegroup
 
-import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.editor.ScrollType
-import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.intellij.openapi.fileEditor.impl.FileEditorOpenOptions
+import com.intellij.openapi.fileEditor.impl.EditorWindow
+import com.intellij.openapi.vfs.VirtualFile
 import javax.swing.SwingConstants
 
-class GotoImplementationInOppositeGroupAction : AnAction() {
+/**
+ * Shows the implementation in the opposite editor group, cycling through the groups in visual order
+ * the way "Move Tab to Opposite Group" does.
+ */
+class GotoImplementationInOppositeGroupAction : GotoImplementationInSplitAction() {
 
-    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
-
-    override fun actionPerformed(e: AnActionEvent) {
-        val project = e.project ?: return
-        val editor = e.getData(CommonDataKeys.EDITOR) ?: return
-
-        val offset = editor.caretModel.offset
-        val targetElements = GotoDeclarationAction.findAllTargetElements(project, editor, offset)
-        if (targetElements.isEmpty()) return
-
-        val target = targetElements[0]
-        val targetFile = target.containingFile?.virtualFile ?: return
-        val targetOffset = target.textOffset
-
-        val fem = FileEditorManagerEx.getInstanceEx(project)
-        val currentWindow = fem.currentWindow ?: return
-
-        val oppositeWindow = fem.getNextWindow(currentWindow).let { next ->
-            if (next != null && next != currentWindow) {
-                next
-            } else {
-                fem.createSplitter(SwingConstants.VERTICAL, currentWindow)
-                fem.getNextWindow(currentWindow) ?: return
-            }
-        }
-
-        val composite = fem.openFile(
-            file = targetFile,
-            window = oppositeWindow,
-            options = FileEditorOpenOptions(requestFocus = true),
-        )
-
-        val textEditor = composite.allEditors.filterIsInstance<TextEditor>().firstOrNull()
-        textEditor?.editor?.let {
-            it.caretModel.moveToOffset(targetOffset)
-            it.scrollingModel.scrollToCaret(ScrollType.CENTER)
-        }
-    }
-
-    override fun update(e: AnActionEvent) {
-        val project = e.project
-        val editor = e.getData(CommonDataKeys.EDITOR)
-        e.presentation.isEnabledAndVisible = project != null && editor != null
+    override fun findTargetWindow(
+        fem: FileEditorManagerEx,
+        currentWindow: EditorWindow,
+        targetFile: VirtualFile,
+    ): EditorWindow? {
+        // getNextWindow() wraps around at the last group and returns the current window when that is
+        // the only group, which is when the split still has to be created.
+        return fem.getNextWindow(currentWindow)?.takeIf { it != currentWindow }
+            // All arguments explicit: relying on a default calls the synthetic `split$default`
+            // bridge, whose signature shifts whenever the platform adds another defaulted parameter.
+            ?: currentWindow.split(
+                SwingConstants.VERTICAL,
+                false,
+                targetFile,
+                true,
+                true,
+            )
     }
 }
