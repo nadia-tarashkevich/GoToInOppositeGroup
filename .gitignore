@@ -3,4 +3,6 @@
 .idea
 .intellijPlatform
 .kotlin
+bin
 build
+out

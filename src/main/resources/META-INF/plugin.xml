@@ -4,8 +4,9 @@
     <name>GoToInOppositeGroup</name>
     <vendor email="nadia.tarashkevich@gmail.com" url="https://github.com/nadia-tarashkevich">nadia-tarashkevich</vendor>
     <description><![CDATA[
-        <p>Provides a <b>Goto Implementation in Opposite Group</b> action that opens the implementation of the symbol
-        under the caret directly in the opposite editor split/group.</p>
+        <p>Provides two actions that open the implementation of the symbol under the caret directly in another editor
+        split/group: <b>Goto Implementation in Opposite Group</b> puts it in the opposite group, while
+        <b>Goto Implementation in Right Split</b> always puts it in a group to the right.</p>
 
         <p>When working with two vertical editor splits (a common setup on wide monitors), checking the implementation
         of a method or class normally requires two separate steps: first "Goto Implementation" to resolve the symbol,
@@ -15,6 +16,7 @@
         <p><b>Features:</b></p>
         <ul>
             <li>Navigate to a symbol's implementation directly in the opposite editor split</li>
+            <li>Or always navigate into a split to the right, whichever group you start from</li>
             <li>Automatically creates a split if one does not exist</li>
             <li>Keeps your current editor position intact</li>
             <li>Available from the Navigate menu, editor context menu, and Search Everywhere</li>
@@ -34,6 +36,13 @@
                 class="com.github.nadiatarashkevich.gotoinoppositegroup.GotoImplementationInOppositeGroupAction"
                 text="Goto Implementation in Opposite Group"
                 description="Navigate to the implementation of the symbol under the caret in the opposite editor split">
+            <add-to-group group-id="GoToMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu.GoTo" anchor="last"/>
+        </action>
+        <action id="GotoImplementationInRightSplit"
+                class="com.github.nadiatarashkevich.gotoinoppositegroup.GotoImplementationInRightSplitAction"
+                text="Goto Implementation in Right Split"
+                description="Navigate to the implementation of the symbol under the caret in a split to the right">
             <add-to-group group-id="GoToMenu" anchor="last"/>
             <add-to-group group-id="EditorPopupMenu.GoTo" anchor="last"/>
         </action>
